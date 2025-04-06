@@ -4,6 +4,19 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
+# Optional: import only when using Streamlit
+try:
+    import streamlit as st
+    from huggingface_hub import login
+
+    # Only run this block if "HUGGINGFACEHUB_API_TOKEN" exists in Streamlit secrets
+    if "HUGGINGFACEHUB_API_TOKEN" in st.secrets:
+        huggingface_token = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
+        login(token=huggingface_token)
+except (ImportError, ModuleNotFoundError):
+    # Not running in Streamlit or streamlit module not available
+    pass
+
 class SHLRecommendationEngine:
     def __init__(self, csv_path='shl_final_catalog.csv', model_name='all-MiniLM-L6-v2'):
         self.csv_path = csv_path
