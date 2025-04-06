@@ -1,12 +1,11 @@
 streamlit==1.44.1
 flask==3.0.2
 pandas==2.2.3
-numpy==1.24.4
+numpy==1.26.4  # Minimum required by pandas 2.2.3
 sentence-transformers==2.2.2
-scikit-learn==1.4.2
+scikit-learn==1.6.1
 gunicorn==21.2.0
-torch==2.1.0
-transformers==4.34.0
 python-dotenv==1.0.0
+setuptools==69.5.1
 selenium==4.31.0
 beautifulsoup4==4.13.3
