@@ -38,7 +38,7 @@ Setup Steps
 
 Clone the Repository:
 
-git clone https://github.com/yourusername/SHL-Assessment-Recommendation-Engine.git
+git clone https://github.com/SHAKSHIY/SHL-Assessment-Recommendation-Engine.git
 
 cd SHL-Assessment-Recommendation-Engine
 
