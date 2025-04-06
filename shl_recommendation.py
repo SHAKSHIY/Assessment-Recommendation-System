@@ -4,6 +4,8 @@ import pandas as pd
 import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
+from huggingface_hub import login
+
 
 # # Optional: Login to Hugging Face (works in Streamlit & Render)
 # try:
@@ -28,7 +30,7 @@ huggingface_token = os.environ.get("HUGGINGFACEHUB_API_TOKEN")
 if huggingface_token:
     login(token=huggingface_token)
 else:
-    print("⚠️ Hugging Face token not found in environment variables.")
+    print(" Hugging Face token not found in environment variables.")
 
 class SHLRecommendationEngine:
     def __init__(self, csv_path='shl_final_catalog.csv', model_name='all-MiniLM-L6-v2'):
