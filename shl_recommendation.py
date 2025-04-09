@@ -14,7 +14,7 @@ else:
     print("⚠️ Hugging Face token not found in environment variables.")
 
 class SHLRecommendationEngine:
-    def __init__(self, csv_path='shl_final_catalog.csv', model_name='all-MiniLM-L6-v2'):
+    def __init__(self, csv_path='shl_final_catalog.csv', model_name='paraphrase-MiniLM-L3-v2'):
         self.csv_path = csv_path
         self.model_name = model_name
         self.catalog = self.load_and_preprocess_data()

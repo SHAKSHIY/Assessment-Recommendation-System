@@ -7,7 +7,7 @@ app = Flask(__name__)
 # Load the engine before starting the server
 csv_path = os.path.join(os.path.dirname(__file__), 'shl_final_catalog.csv')
 print("🚀 Loading recommendation engine...")
-engine = SHLRecommendationEngine(csv_path=csv_path)
+engine = SHLRecommendationEngine(csv_path='shl_final_catalog.csv', model_name='paraphrase-MiniLM-L3-v2')
 print("✅ Engine loaded successfully.")
 
 # Health Check Endpoint
