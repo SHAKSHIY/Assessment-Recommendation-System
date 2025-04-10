@@ -5,7 +5,6 @@ import pickle
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 from huggingface_hub import login
-from sklearn.preprocessing import normalize
 
 
 # Get Hugging Face token from environment variables
@@ -61,23 +60,28 @@ class SHLRecommendationEngine:
         return embeddings
 
     def get_recommendations(self, query, top_k=10):
-    # 1) Encode the query and ensure it's a float array
-        raw_query_emb = self.model.encode([query])  # shape (1, embedding_dim)
+    # Encode query and ensure it's a 2D numpy float array of shape (1, d)
+        raw_query_emb = self.model.encode([query])
         query_embedding = np.array(raw_query_emb, dtype=np.float32)
+        if query_embedding.ndim == 1:
+            query_embedding = query_embedding.reshape(1, -1)
 
-    # 2) Convert your precomputed (or computed) embeddings to float arrays too
+    # Ensure your stored embeddings are a 2D numpy float array of shape (N, d)
         embeddings_float = np.array(self.embeddings, dtype=np.float32)
+        if embeddings_float.ndim == 1:
+            embeddings_float = embeddings_float.reshape(-1, query_embedding.shape[1])
 
-    # 3) Now compute cosine similarity using numeric arrays
+    # Debug: Uncomment the print statement below to check shapes in logs
+    # print("DEBUG: query_embedding shape =", query_embedding.shape, "dtype =", query_embedding.dtype)
+    # print("DEBUG: embeddings shape =", embeddings_float.shape, "dtype =", embeddings_float.dtype)
+
+    # Compute cosine similarity (this expects float arrays with correct shapes)
         similarities = cosine_similarity(query_embedding, embeddings_float)[0]
-
-    # 4) Find top K indices
         top_indices = np.argsort(similarities)[::-1][:top_k]
-
-    # 5) Copy recommended rows
         recommendations = self.catalog.iloc[top_indices].copy()
         recommendations['similarity'] = similarities[top_indices]
         return recommendations
+
 
 if __name__ == '__main__':
     engine = SHLRecommendationEngine(csv_path='shl_final_catalog.csv')
