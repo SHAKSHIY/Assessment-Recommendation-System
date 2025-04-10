@@ -59,12 +59,18 @@ class SHLRecommendationEngine:
         return embeddings
 
     def get_recommendations(self, query, top_k=10):
-        query_embedding = self.model.encode([query])
-        similarities = cosine_similarity(query_embedding, self.embeddings)[0]
-        top_indices = np.argsort(similarities)[::-1][:top_k]
-        recommendations = self.catalog.iloc[top_indices].copy()
-        recommendations['similarity'] = similarities[top_indices]
-        return recommendations
+    # Encode query and convert it to a numpy array
+    query_embedding = np.array(self.model.encode([query]))
+    
+    # Ensure loaded embeddings are also a NumPy array
+    embeddings = np.array(self.embeddings)
+    
+    # Compute cosine similarity
+    similarities = cosine_similarity(query_embedding, embeddings)[0]
+    top_indices = np.argsort(similarities)[::-1][:top_k]
+    recommendations = self.catalog.iloc[top_indices].copy()
+    recommendations['similarity'] = similarities[top_indices]
+    return recommendations
 
 if __name__ == '__main__':
     engine = SHLRecommendationEngine(csv_path='shl_final_catalog.csv')
