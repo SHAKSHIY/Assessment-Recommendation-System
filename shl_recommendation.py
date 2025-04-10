@@ -5,6 +5,8 @@ import pickle
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 from huggingface_hub import login
+from sklearn.preprocessing import normalize
+
 
 # Get Hugging Face token from environment variables
 huggingface_token = os.environ.get("HUGGINGFACEHUB_API_TOKEN")
@@ -59,18 +61,23 @@ class SHLRecommendationEngine:
         return embeddings
 
     def get_recommendations(self, query, top_k=10):
-    # Encode query and convert it to a numpy array
-    query_embedding = np.array(self.model.encode([query]))
-    
-    # Ensure loaded embeddings are also a NumPy array
-    embeddings = np.array(self.embeddings)
-    
-    # Compute cosine similarity
-    similarities = cosine_similarity(query_embedding, embeddings)[0]
-    top_indices = np.argsort(similarities)[::-1][:top_k]
-    recommendations = self.catalog.iloc[top_indices].copy()
-    recommendations['similarity'] = similarities[top_indices]
-    return recommendations
+    # 1) Encode the query and ensure it's a float array
+        raw_query_emb = self.model.encode([query])  # shape (1, embedding_dim)
+        query_embedding = np.array(raw_query_emb, dtype=np.float32)
+
+    # 2) Convert your precomputed (or computed) embeddings to float arrays too
+        embeddings_float = np.array(self.embeddings, dtype=np.float32)
+
+    # 3) Now compute cosine similarity using numeric arrays
+        similarities = cosine_similarity(query_embedding, embeddings_float)[0]
+
+    # 4) Find top K indices
+        top_indices = np.argsort(similarities)[::-1][:top_k]
+
+    # 5) Copy recommended rows
+        recommendations = self.catalog.iloc[top_indices].copy()
+        recommendations['similarity'] = similarities[top_indices]
+        return recommendations
 
 if __name__ == '__main__':
     engine = SHLRecommendationEngine(csv_path='shl_final_catalog.csv')
