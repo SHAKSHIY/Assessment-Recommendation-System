@@ -1,4 +1,6 @@
 # SHL Assessment Recommendation Engine
+![image](https://github.com/user-attachments/assets/584c585c-ae5e-4fbf-bc47-f63fe4bb73ed)
+
 ## Overview
 This project is an intelligent recommendation system that returns up to 10 relevant SHL assessments based on a natural language query or job description. The system processes a catalog of SHL assessments, generates vector embeddings using a SentenceTransformer model, and computes cosine similarity to rank the assessments.
 
