@@ -2,30 +2,68 @@
 ## Overview
 This project is an intelligent recommendation system that returns up to 10 relevant SHL assessments based on a natural language query or job description. The system processes a catalog of SHL assessments, generates vector embeddings using a SentenceTransformer model, and computes cosine similarity to rank the assessments.
 
-## Features
-Data Processing:
+- Problem: Hiring managers often struggle to select the right SHL assessments for specific roles. Keyword-based filtering is slow and imprecise.
+- Solution: A semantic recommendation engine powered by SBERT embeddings and cosine similarity that returns the top K relevant assessments based on a natural‑language query or job description.
 
-Loads assessment data from a CSV file (shl_final_catalog.csv).
+  This repository includes:
 
-Standardizes column names and combines key fields into a single descriptive text.
+1. Preprocessing & Embeddings: Scripts to preprocess the SHL catalog and precompute feature embeddings.
 
-Embedding Generation:
+2. Flask API: Two endpoints:
 
-Uses the SentenceTransformer (all-MiniLM-L6-v2) to convert the combined text into vector embeddings.
+   GET /health — simple health check.
 
-Recommendation Logic:
+   GET /recommend?query=... — returns JSON with up to 10 recommended assessments.
 
-Computes cosine similarity between the query and each assessment embedding using scikit-learn.
+3. Streamlit App: A user-friendly web interface to type queries and browse recommendations.
 
-Selects and returns the top-K similar assessments as recommendations.
+## Features & Architecture
 
-Interactive Web Interface:
+1. Data & Preprocessing
 
-Built with Streamlit to allow users to input queries and view recommendations (displaying assessment name with clickable URL, remote testing support, adaptive/IRT support, duration, test type, and similarity score).
+- Data Source: shl_final_catalog.csv containing columns:
 
-REST API:
+Assessment Name, URL, Remote Testing (Yes/No), Adaptive/IRT (Yes/No), Duration (minutes), Test Type.
 
-A Flask API endpoint (/recommend) provides programmatic access to the recommendation engine by returning JSON-formatted results.
+- Combined Features: We concatenate all columns into a single combined_features string for each row.
+
+2. Embeddings
+
+- Model: sentence-transformers/all-MiniLM-L6-v2.
+
+- Precompute: Run precompute_embeddings.py once to encode all catalog entries and save as data/embeddings.pkl.
+
+- Cache: On startup, the engine loads the precomputed embeddings for faster initialization.
+
+3. Recommendation Logic
+
+- Query Encoding: Encode the user's natural-language query with the same SBERT model.
+
+- Similarity: Compute cosine similarity between the query embedding and catalog embeddings.
+
+- Top‑K: Sort similarities, take the top K (default 10), and return corresponding assessments.
+
+4. Flask API
+
+- Health Check
+
+GET /health
+
+Response: {"status":"healthy"}
+
+- Recommendation
+
+GET /recommend?query=Your+text+here
+
+Response: [ { url, adaptive_support, description, duration, remote_support, test_type }, … ]
+
+5. Streamlit App
+
+- Initialize cached engine on first run.
+
+- Text input for query, button to trigger recommendations.
+
+- Display each recommendation with hyperlinked name and attributes.
 
 ## Installation
 Prerequisites
@@ -36,13 +74,13 @@ Git
 
 Setup Steps
 
-Clone the Repository:
+- Clone the Repository:
 
 git clone https://github.com/SHAKSHIY/SHL-Assessment-Recommendation-Engine.git
 
 cd SHL-Assessment-Recommendation-Engine
 
-Create a Virtual Environment:
+- Create a Virtual Environment:
 
 py -3.11 -m venv venv
 
