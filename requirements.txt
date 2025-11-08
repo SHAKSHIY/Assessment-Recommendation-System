@@ -12,3 +12,4 @@ torch==2.2.2
 transformers==4.34.0
 selenium==4.31.0
 beautifulsoup4==4.13.3
+tokenizers==0.15.2
