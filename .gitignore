@@ -1,0 +1,24 @@
+.streamlit/secrets.toml
+# Ignore all .pkl files
+*.pkl
+
+# BUT don't ignore this specific one
+!data/embeddings.pkl
+
+# Virtual environment
+venv/
+__pycache__/
+
+# Data & embeddings
+data/embeddings.pkl
+*.pkl
+*.pickle
+
+# System & temp files
+.DS_Store
+*.log
+*.tmp
+
+# Excel files (optional – skip if needed for submission)
+Train-set.xlsx
+Test-Set.xlsx
